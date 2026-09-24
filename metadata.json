@@ -1,0 +1,6 @@
+{
+  "name": "Salon Gift",
+  "description": "Plataforma web para gestión ágil de citas, disponibilidad y validación de inventario de insumos en tiempo real con Supabase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

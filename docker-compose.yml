@@ -1,0 +1,12 @@
+services:
+  salon-gift-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://llcxhdvfcpshmfwxymjt.supabase.co}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-sb_publishable_LEVCS5jK7Hn02XAEypDiZg_XX5N5WZ3}
+    container_name: salon_gift_app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
