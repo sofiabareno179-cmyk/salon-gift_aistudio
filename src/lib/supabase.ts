@@ -236,9 +236,9 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
   {
     id: 'apt-101',
     client_id: 'usr-1',
-    client_name: 'Sofia Bareño',
-    client_email: 'sofiabareno179@gmail.com',
-    client_phone: '+52 55 4123 8890',
+    client_name: 'Sofia B.',
+    client_email: 'sofia.b@example.com',
+    client_phone: '+52 55 4123 0000',
     service_id: 'srv-1',
     service_name: 'Manicura Polygel Escultural',
     stylist_name: 'Valentina Rossi (Master Nail Artist)',
@@ -355,12 +355,12 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
   }
 ];
 
-// Current Profile State
+// Current Profile State (Las credenciales reales se leen desde .env que está protegido en .gitignore)
 export const DEFAULT_PROFILE: Profile = {
-  id: 'usr-1',
-  email: 'sofiabareno179@gmail.com',
-  full_name: 'Sofia Bareño',
-  phone: '+52 55 4123 8890',
+  id: 'usr-admin',
+  email: import.meta.env.VITE_ADMIN_EMAIL || 'admin@salongift.com',
+  full_name: import.meta.env.VITE_ADMIN_NAME || 'Administrador Salon Gift',
+  phone: import.meta.env.VITE_ADMIN_PHONE || '+52 55 0000 0000',
   role: 'ADMIN',
   avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   created_at: '2026-01-15T08:00:00Z'

@@ -78,11 +78,22 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentView, setCurrentView] = useState<ViewName>('DashboardView');
+  const [profile, setProfile] = useState<Profile>(() => {
+    const saved = localStorage.getItem('sg_profile');
+    return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
+  });
+  const [currentView, setCurrentView] = useState<ViewName>(() => {
+    const saved = localStorage.getItem('sg_profile');
+    if (saved) {
+      try {
+        const p = JSON.parse(saved);
+        if (p.role === 'CLIENT') return 'ClientDashboardView';
+      } catch (e) {}
+    }
+    return 'DashboardView';
+  });
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [services, setServices] = useState<Service[]>(() => {
     const saved = localStorage.getItem('sg_services');
     return saved ? JSON.parse(saved) : INITIAL_SERVICES;
@@ -142,6 +153,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('sg_notifications', JSON.stringify(notifications));
   }, [notifications]);
 
+  useEffect(() => {
+    localStorage.setItem('sg_profile', JSON.stringify(profile));
+  }, [profile]);
+
   // Check Supabase connection and try to fetch initial data
   useEffect(() => {
     async function checkSupabase() {
@@ -195,26 +210,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [profile.role, addToast]);
 
   const toggleRole = useCallback(() => {
-    setProfile(prev => {
-      const newRole: UserRole = prev.role === 'ADMIN' ? 'CLIENT' : 'ADMIN';
+    if (profile.role === 'CLIENT') {
       addToast({
         type: 'info',
-        title: `Sesión alternada a ${newRole}`,
-        message: newRole === 'ADMIN' 
-          ? 'Bienvenido al Panel de Administración y control de inventario.' 
-          : 'Bienvenido a tu Portal Exclusivo de Cliente (acceso a admin restringido).'
+        title: 'Autenticación Requerida',
+        message: 'Para ingresar como Administrador, debes iniciar sesión con las credenciales oficiales.'
       });
-      
-      // Automatically redirect to the respective separated dashboard
-      if (newRole === 'CLIENT') {
-        setCurrentView('ClientDashboardView');
-      } else {
-        setCurrentView('DashboardView');
-      }
+      setCurrentView('AuthView');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
-      return { ...prev, role: newRole };
+    setProfile(prev => {
+      const newRole: UserRole = 'CLIENT';
+      addToast({
+        type: 'info',
+        title: 'Sesión alternada a CLIENT',
+        message: 'Has cambiado a la vista de cliente (acceso a admin restringido).'
+      });
+      setCurrentView('ClientDashboardView');
+      return { 
+        ...prev, 
+        role: newRole,
+        full_name: 'Camila Morales',
+        email: 'camila.m@example.com'
+      };
     });
-  }, [addToast]);
+  }, [profile.role, addToast]);
 
   // Stock mutation with RLS check simulation & real DB try/catch
   const updateSupplyStock = async (supplyId: string, delta: number): Promise<boolean> => {

@@ -24,7 +24,8 @@ export const ReservationWizardView: React.FC = () => {
     validateSuppliesForService, 
     createAppointment, 
     changeView,
-    selectedItemId
+    selectedItemId,
+    profile
   } = useApp();
 
   const [step, setStep] = useState<number>(1);
@@ -39,9 +40,9 @@ export const ReservationWizardView: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>('15:00');
   
   // Client details
-  const [clientName, setClientName] = useState<string>('Sofia Bareño');
-  const [clientEmail, setClientEmail] = useState<string>('sofiabareno179@gmail.com');
-  const [clientPhone, setClientPhone] = useState<string>('+52 55 4123 8890');
+  const [clientName, setClientName] = useState<string>(profile.full_name || 'Camila Morales');
+  const [clientEmail, setClientEmail] = useState<string>(profile.email || 'camila.m@example.com');
+  const [clientPhone, setClientPhone] = useState<string>(profile.phone || '+52 55 9876 5432');
   const [notes, setNotes] = useState<string>('Diseño personalizado. Primera sesión del mes.');
 
   // Notification toggles
